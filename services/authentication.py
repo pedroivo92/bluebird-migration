@@ -1,20 +1,17 @@
 import requests
 import re
 
-from repositories.cache import CacheHandler
 from settings import *
 
 class AuthRepository:
 
     def __init__(self, auth_user, auth_pass, auth_url, logger):
-        self.cache_connection = CacheHandler()
         self.user = auth_user
         self.password = auth_pass
         self.url = auth_url
         self.logger = logger
 
     def generate_token_tgt(self, service_name):
-        token_tgt_name = self._get_token_tgt_name(service_name)
         token_tgt = None
         if not token_tgt:
             token_tgt = self._generate_cas_tgt()
@@ -53,19 +50,6 @@ class AuthRepository:
             raise e
 
         return r.text
-
-    def _get_cache_info(self, name, value, expire):
-        return {
-            "token_name": name,
-            "token_value": value,
-            "token_expire": expire
-        }
-
-    def _get_token_tgt_name(self, service_name):
-        if service_name == str(AUTH_SERVICE_AKAKO):
-            return 'token_tgt_akako'
-
-        return 'token_tgt'
 
     def _parse_tgt(self, text):
         m = re.match(r'.*?tickets/(TGT\-.*?)"', text)

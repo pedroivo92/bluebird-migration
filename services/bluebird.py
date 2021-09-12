@@ -48,8 +48,6 @@ class BluebirdHandler:
             response.raise_for_status()
         except requests.exceptions.RequestException as e:
             error = str(e.response.text)
-            #error_detail = error_json["detail"].replace("'", "")
-            #error = f'{error_json["title"]} - {error_json["status"]}: {error_detail}'
             self.logger.error(msg=error)
             return False, error
 
