@@ -16,8 +16,8 @@ class MigrationRepository:
             query = "mg.id_globo, mg.current_email_address, mg.id_status, " \
                     "mg.customer_id, mg.cart_id, ps.id_stage " \
                     "from integratordb.migration as mg " \
-                    "left join integratordb.process as ps on mg.id_globo = ps.id_migration" \
-                    f"where id_status = {3} and cart_id = null "
+                    "left join integratordb.process as ps on mg.id_globo = ps.id_migration " \
+                    f"where id_status = {3} and cart_id is null "
     
             data = self.database_conn.execute(select(text(query)))
             items = data.fetchmany(10)

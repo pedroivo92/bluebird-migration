@@ -1,16 +1,15 @@
-from migrator_db import MigrationRepository
-from authentication import AuthRepository
-from bluebird import BluebirdHandler
-from globomail import GlobomailRepository
+from services.migrator_db import MigrationRepository
+from services.authentication import AuthRepository
+from services.bluebird import BluebirdHandler
+from services.globomail import GlobomailRepository
 from settings import *
 
 
-class IntegratorService:
+class BluebirdService:
 
     def __init__(self, logger):
         self.migration_repository = None
         self.globomail_repository = None
-        self.roundcube_repository = None
         try:
             self.logger = logger
             self.migration_repository = MigrationRepository()
@@ -30,7 +29,9 @@ class IntegratorService:
                 sucess = self._handler_bluebird_process(item)
                 if not sucess:
                     continue
-
+                
+                self.migration_repository.delete_process_registry(item)
+                self.logger.info(msg=f'id_globo: {item["id_globo"]} successfully processed in bluebird')
         finally:
             self._close_connections()
 
@@ -48,7 +49,10 @@ class IntegratorService:
         token_bluebird_st = self._get_cached_token(str(AUTH_SERVICE_BLUEBIRD))
 
         if not item['id_stage']:
-            item['id_stage'] = 10 
+            item['id_stage'] = 10
+        else:
+            self.migration_repository.update_reprocess_status(item)
+
         
         if item['id_stage'] == 12:
             sucess = self._checkout_cart(item, token_bluebird_st)
