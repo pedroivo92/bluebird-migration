@@ -1,0 +1,10 @@
+version: '3.5'
+services:
+  migrator_bluebird:
+    container_name: bluebird_service
+    build: .
+    volumes:
+      - .:/opt/globo
+    restart: always
+    env_file:
+      - .env
